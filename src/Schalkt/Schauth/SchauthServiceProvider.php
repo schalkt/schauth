@@ -1,8 +1,11 @@
-<?php namespace Schalkt\Schalar;
+<?php namespace Schalkt\Schauth;
 
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
 
-class SchalarServiceProvider extends ServiceProvider {
+
+class SchauthServiceProvider extends ServiceProvider
+{
 
 	/**
 	 * Indicates if loading of the provider is deferred.
@@ -18,7 +21,9 @@ class SchalarServiceProvider extends ServiceProvider {
 	 */
 	public function boot()
 	{
-		$this->package('schalkt/schalar');
+
+		$this->package('schalkt/schauth', 'schauth');
+
 	}
 
 	/**

@@ -1,23 +1,25 @@
 {
-    "name": "schalkt/schalar",
-    "description": "",
-    "authors": [
-        {
-            "name": "Tamas Schalk",
-            "email": "composer@schalk.hu"
-        }
-    ],
-    "require": {
-        "php": ">=5.4.0",
-        "illuminate/support": "4.2.*"
-    },
-    "autoload": {
-        "classmap": [
-            "src/migrations"
-        ],
-        "psr-0": {
-            "Schalkt\\Schalar\\": "src/"
-        }
-    },
-    "minimum-stability": "stable"
+	"name": "schalkt/schauth",
+	"description": "",
+	"authors": [
+		{
+			"name": "Tamas Schalk",
+			"email": "composer@schalk.hu"
+		}
+	],
+	"require": {
+		"php": ">=5.4.0",
+		"illuminate/support": "4.2.*",
+		"firebase/php-jwt": "2.*",
+		"guzzlehttp/guzzle": "4.*"
+	},
+	"autoload": {
+		"classmap": [
+			"src/migrations"
+		],
+		"psr-0": {
+			"Schalkt\\Schauth\\": "src/"
+		}
+	},
+	"minimum-stability": "stable"
 }
