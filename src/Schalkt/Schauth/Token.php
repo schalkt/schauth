@@ -4,99 +4,131 @@ namespace Schalkt\Schauth;
 
 use GuzzleHttp\Message\Request;
 
+/**
+ * Class Token
+ *
+ * @package Schalkt\Schauth
+ */
 class Token
 {
 
 
-	public static function guest()
-	{
+    /**
+     * Create JWT token
+     *
+     * @param       $user_id
+     * @param array $tokenData
+     *
+     * @return string
+     */
+    public static function create($user_id, $tokenData = array())
+    {
+        $tokenData['id'] = $user_id;
+        $tokenData['time'] = time();
 
-	}
+        return \JWT::encode($tokenData, \Config::get('schauth::salt.token'));
 
-	/**
-	 * Create JWT token
-	 *
-	 * @param       $user_id
-	 * @param array $tokenData
-	 *
-	 * @return string
-	 */
-	public static function create($user_id, $tokenData = array())
-	{
-		$tokenData['id'] = $user_id;
-		$tokenData['time'] = time();
-
-		return \JWT::encode($tokenData, \Config::get('schauth::salt.token'));
-
-	}
+    }
 
 
-	/**
-	 * Renew JWT token
-	 *
-	 * @param $tokenData
-	 *
-	 * @return string
-	 */
-	public static function renew($tokenData)
-	{
+    /**
+     * Renew JWT token
+     *
+     * @param $tokenData
+     *
+     * @return string
+     */
+    public static function renew($tokenData)
+    {
 
-		$tokenData['time'] = time();
+        $tokenData['time'] = time();
 
-		return \JWT::encode($tokenData, \Config::get('schauth::salt.token'));
+        return \JWT::encode($tokenData, \Config::get('schauth::salt.token'));
 
-	}
+    }
 
 
-	/**
-	 * Check user JWT token
-	 *
-	 * @return null|object
-	 * @throws Exception
-	 */
-	public static function get()
-	{
+    /**
+     * @param      $token
+     * @param null $expire
+     *
+     * @return null
+     */
+    public static function check($token, $expire = null)
+    {
 
-		try {
+        $salt = \Config::get('schauth::token.salt');
 
-			if (\Input::has("token")) {
-				$token = \Input::get("token");
-			} else {
-				$auth = \Illuminate\Support\Facades\Request::header('Auth');
-				$auth = explode(' ', $auth);
-				$token = !empty($auth[1]) ? $auth[1] : null;
-			}
+        // token decode
+        $userToken = \JWT::decode($token, $salt, array('HS256'));
 
-			if (empty($token)) {
-				return null;
-			}
+        // check token data
+        if (empty($userToken->time) || empty($userToken->id)) {
+            return null;
+        }
 
-			// token decode
-			$userToken = \JWT::decode($token, \Config::get('schauth::token.salt'), array('HS256'));
+        if (!empty($userToken->expAt)) {
 
-			// check token data
-			if (empty($userToken->time) || empty($userToken->id)) {
-				return null;
-			}
+            // check token expire at
+            if ($userToken->expAt < time()) {
+                return null;
+            }
 
-			$expire = \Config::get('schauth::expire.token_web');
-			if ($expire < 60) {
-				$expire = 60;
-			}
+        } else {
 
-			// check token expire
-			if (($userToken->time + $expire) < time()) {
-				return null;
-			}
+            if ($expire === null) {
+                $expire = \Config::get('schauth::expire.token_web');
+                if ($expire < 60) {
+                    $expire = 60;
+                }
+            }
 
-			return $userToken;
+            // check token expire
+            if (($userToken->time + $expire) < time()) {
+                return null;
+            }
 
-		} catch (\Exception $e) {
+        }
 
-			throw new Exception('Token error' . $e->getMessage());
 
-		}
+        return $userToken;
 
-	}
+    }
+
+
+    /**
+     * Check user JWT token
+     *
+     * @return null|object
+     * @throws Exception
+     */
+    public static function get()
+    {
+
+        try {
+
+            if (\Input::has("token")) {
+                $token = \Input::get("token");
+            } else {
+                $auth = \Illuminate\Support\Facades\Request::header('Auth');
+                $auth = explode(' ', $auth);
+                $token = !empty($auth[1]) ? $auth[1] : null;
+            }
+
+            if (empty($token)) {
+                return null;
+            }
+
+            $userToken = self::check($token);
+
+            return $userToken;
+
+        } catch (\Exception $e) {
+
+            throw new Exception('Token error' . $e->getMessage());
+
+        }
+
+    }
 
 }
