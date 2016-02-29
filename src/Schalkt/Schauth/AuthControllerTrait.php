@@ -73,12 +73,12 @@ trait AuthControllerTrait
     public function validateReCapthca($recaptcha)
     {
 
-        if (empty($recaptcha)) {
-            return false;
-        }
-
         if (\Config::get('schauth::config.recaptcha.required.login') !== true) {
             return true;
+        }
+
+        if (empty($recaptcha)) {
+            return false;
         }
 
         try {
