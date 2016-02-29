@@ -26,7 +26,7 @@ class Token
         $tokenData['id'] = $user_id;
         $tokenData['time'] = time();
 
-        return \JWT::encode($tokenData, \Config::get('schauth::salt.token'));
+        return \JWT::encode($tokenData, \Config::get('schauth::config.salt.token'));
 
     }
 
@@ -43,7 +43,7 @@ class Token
 
         $tokenData['time'] = time();
 
-        return \JWT::encode($tokenData, \Config::get('schauth::salt.token'));
+        return \JWT::encode($tokenData, \Config::get('schauth::config.salt.token'));
 
     }
 
@@ -57,7 +57,7 @@ class Token
     public static function check($token, $expire = null)
     {
 
-        $salt = \Config::get('schauth::token.salt');
+        $salt = \Config::get('schauth::config.token.salt');
 
         // token decode
         $userToken = \JWT::decode($token, $salt, array('HS256'));
@@ -77,7 +77,7 @@ class Token
         } else {
 
             if ($expire === null) {
-                $expire = \Config::get('schauth::expire.token_web');
+                $expire = \Config::get('schauth::config.expire.token_web');
                 if ($expire < 60) {
                     $expire = 60;
                 }
