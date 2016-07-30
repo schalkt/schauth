@@ -1,10 +1,12 @@
 {
 	"name": "schalkt/schauth",
-	"description": "",
+	"version": "0.1.2",
+	"description": "Custom authentication for Laravel 4.2",
 	"authors": [
 		{
 			"name": "Tamas Schalk",
-			"email": "composer@schalk.hu"
+			"email": "composer@schalk.hu",
+			"homepage": "https://github.com/schalkt"
 		}
 	],
 	"require": {
